@@ -1,52 +1,30 @@
-AFRAME.registerComponent('item', {
-  schema: {
-    type: {type: 'string'}
-  },
-
+AFRAME.registerComponent('game-manager', {
   init: function () {
-    const el = this.el;
-    const data = this.data;
+    const sceneEl = this.el.sceneEl;
+    const itemsToSpawn = 5;
+    const itemTypes = [
+      { type: 'plastic', shape: 'box', color: '#FFC300' },
+      { type: 'paper', shape: 'cylinder', color: '#C70039' },
+      { type: 'metal', shape: 'sphere', color: '#900C3F' }
+    ];
 
-    let color = '#FFFFFF';
-    switch (data.type) {
-      case 'plastic':
-        color = '#FF5733'; // Red for plastic
-        break;
-      case 'paper':
-        color = '#33FF57'; // Green for paper
-        break;
-      case 'metal':
-        color = '#3357FF'; // Blue for metal
-        break;
-    }
-    el.setAttribute('color', color);
+    for (let i = 0; i < itemsToSpawn; i++) {
+      const itemDetails = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+      const item = document.createElement(`a-${itemDetails.shape}`);
+      
+      item.setAttribute('class', 'recyclable');
+      item.setAttribute('recyclable-type', itemDetails.type);
+      item.setAttribute('color', itemDetails.color);
+      item.setAttribute('scale', '0.2 0.2 0.2');
+      item.setAttribute('grabbable', '');
+      item.setAttribute('dynamic-body', '');
 
-    // Make item grabbable
-    el.classList.add('grabbable');
-    el.setAttribute('grabbable', '');
+      // Random position
+      const x = Math.random() * 4 - 2; // -2 to 2
+      const z = Math.random() * 4 - 2; // -2 to 2
+      item.setAttribute('position', `${x} 1 ${z}`);
 
-    // Add collision listener
-    el.addEventListener('collide', this.handleCollision.bind(this));
-  },
-
-  handleCollision: function (event) {
-    const bin = event.detail.body.el;
-    if (bin.classList.contains('recycling-bin')) {
-      const itemType = this.data.type;
-      const binType = bin.getAttribute('bin-type');
-      const scoreText = document.querySelector('#scoreText');
-      const gameEl = this.el.sceneEl.querySelector('[game]');
-      let score = gameEl.getAttribute('game').score;
-
-      if (binType === itemType) {
-        score += 1;
-        gameEl.setAttribute('game', 'score', score);
-        scoreText.setAttribute('text', `value: Score: ${score}; align: center;`);
-        console.log(`Score: ${score}`);
-        this.el.parentNode.removeChild(this.el); // Remove item
-      } else {
-        console.log('Wrong bin!');
-      }
+      sceneEl.appendChild(item);
     }
   }
 });

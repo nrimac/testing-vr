@@ -1,23 +1,27 @@
-AFRAME.registerComponent('game', {
-  schema: {
-    score: { type: 'number', default: 0 },
-  },
-
+AFRAME.registerComponent('bin-checker', {
   init: function () {
-    this.spawnItems();
-  },
+    this.el.addEventListener('body-entered', (evt) => {
+      const recyclable = evt.detail.body.el;
+      if (!recyclable.classList.contains('recyclable')) {
+        return;
+      }
 
-  spawnItems: function () {
-    const sceneEl = this.el.sceneEl;
-    const items = ['plastic', 'paper', 'metal'];
+      const binType = this.el.getAttribute('bin-type');
+      const recyclableType = recyclable.getAttribute('recyclable-type');
 
-    items.forEach((itemType) => {
-      const itemEl = document.createElement('a-box');
-      // Use the 'item' component to set up the object
-      itemEl.setAttribute('item', {type: itemType});
-      itemEl.setAttribute('position', `${Math.random() * 4 - 2} 1 -5`);
-      itemEl.setAttribute('dynamic-body', '');
-      sceneEl.appendChild(itemEl);
+      if (binType === recyclableType) {
+        // Correct bin
+        const scoreText = document.querySelector('#scoreText');
+        let currentScore = parseInt(scoreText.getAttribute('text').value.split(': ')[1]);
+        currentScore++;
+        scoreText.setAttribute('text', 'value', `Score: ${currentScore}`);
+        
+        // Remove the recyclable
+        recyclable.parentNode.removeChild(recyclable);
+      } else {
+        // Incorrect bin - do nothing for now, or add penalty logic
+        console.log(`Incorrect! ${recyclableType} does not go in ${binType} bin.`);
+      }
     });
-  },
+  }
 });
