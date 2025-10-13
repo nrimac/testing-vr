@@ -36,3 +36,32 @@ const RecyclableItem = {
 };
 
 AFRAME.registerComponent('recyclable-item', RecyclableItem);
+
+AFRAME.registerComponent('item', {
+  schema: {
+    type: {type: 'string'}
+  },
+
+  init: function () {
+    const el = this.el;
+    const data = this.data;
+
+    let color = '#FFFFFF';
+    switch (data.type) {
+      case 'plastic':
+        color = '#FF5733'; // Red for plastic
+        break;
+      case 'paper':
+        color = '#33FF57'; // Green for paper
+        break;
+      case 'metal':
+        color = '#3357FF'; // Blue for metal
+        break;
+    }
+    el.setAttribute('color', color);
+
+    // Make item grabbable
+    el.classList.add('grabbable');
+    el.setAttribute('grabbable', '');
+  }
+});
