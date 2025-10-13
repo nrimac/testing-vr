@@ -1,42 +1,3 @@
-const RecyclingBin = {
-  schema: {
-    type: { type: 'string', default: 'recyclable' }
-  },
-  
-  init: function () {
-    this.el.addEventListener('collide', this.onCollide.bind(this));
-  },
-
-  onCollide: function (event) {
-    const itemType = event.detail.body.el.getAttribute('data-type');
-    const binType = this.data.type;
-
-    if (itemType === binType) {
-      console.log(`Correctly sorted: ${itemType}`);
-      // Add scoring logic here
-      event.detail.body.el.parentNode.removeChild(event.detail.body.el); // Remove item
-    } else {
-      console.log(`Incorrectly sorted: ${itemType}`);
-      // Add penalty logic here
-    }
-  }
-};
-
-AFRAME.registerComponent('recycling-bin', RecyclingBin);
-
-const RecyclableItem = {
-  schema: {
-    type: { type: 'string', default: 'plastic' }
-  },
-
-  init: function () {
-    this.el.setAttribute('data-type', this.data.type);
-    this.el.setAttribute('dynamic-body', ''); // Enable physics
-  }
-};
-
-AFRAME.registerComponent('recyclable-item', RecyclableItem);
-
 AFRAME.registerComponent('item', {
   schema: {
     type: {type: 'string'}
@@ -63,5 +24,29 @@ AFRAME.registerComponent('item', {
     // Make item grabbable
     el.classList.add('grabbable');
     el.setAttribute('grabbable', '');
+
+    // Add collision listener
+    el.addEventListener('collide', this.handleCollision.bind(this));
+  },
+
+  handleCollision: function (event) {
+    const bin = event.detail.body.el;
+    if (bin.classList.contains('recycling-bin')) {
+      const itemType = this.data.type;
+      const binType = bin.getAttribute('bin-type');
+      const scoreText = document.querySelector('#scoreText');
+      const gameEl = this.el.sceneEl.querySelector('[game]');
+      let score = gameEl.getAttribute('game').score;
+
+      if (binType === itemType) {
+        score += 1;
+        gameEl.setAttribute('game', 'score', score);
+        scoreText.setAttribute('text', `value: Score: ${score}; align: center;`);
+        console.log(`Score: ${score}`);
+        this.el.parentNode.removeChild(this.el); // Remove item
+      } else {
+        console.log('Wrong bin!');
+      }
+    }
   }
 });
