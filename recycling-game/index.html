@@ -6,12 +6,12 @@
     <meta name="description" content="A simple recycling game in A-Frame." />
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
-    <!-- <script src="js/spawn-recyclables.js"></script>
+    <script src="js/spawn-recyclables.js"></script>
     <script src="js/grabbable.js"></script>
-    <script src="js/recycling-bin.js"></script> -->
+    <script src="js/recycling-bin.js"></script>
   </head>
   <body>
-    <a-scene obb-collider="showColliders: true" vr-mode-ui="hands: true">
+    <a-scene obb-collider="showColliders: true">
       <a-assets>
         <img id="plastic-texture" src="./textures/plastic.jpg" />
         <img id="paper-texture" src="./textures/paper.jpg" />
@@ -20,14 +20,17 @@
 
       <!-- Player -->
       <a-entity id="player" movement-controls="fly: false; speed: 0.1">
-        <a-camera position="0 1.6 0"></a-camera>
+        <a-camera position="0 1.6 0">
+        </a-camera>
         <a-entity
           id="left-hand"
-          hand-tracking-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"
+          meta-touch-controls="hand: left"
+          hand-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"
         ></a-entity>
         <a-entity
           id="right-hand"
-          hand-tracking-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"
+          meta-touch-controls="hand: right"
+          hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"
         ></a-entity>
       </a-entity>
 
@@ -39,7 +42,6 @@
         width="1"
         color="#FFFF00"
         recycling-bin="type: plastic"
-        grabbable
       >
         <a-text
           value="Plastic"
