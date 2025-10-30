@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe@master/components/aframe-physics-system.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/wmurphyrd/aframe-super-hands-component/dist/aframe-super-hands-component.min.js"></script>
     <script src="js/spawn-recyclables.js"></script>
-    <script src="js/grabbable.js"></script>
+    <!-- <script src="js/grabbable.js"></script> -->
     <script src="js/recycling-bin.js"></script>
   </head>
   <body>
@@ -24,8 +24,8 @@
       <!-- Player -->
       <a-entity id="player" movement-controls="fly: false; speed: 0.07">
         <a-camera position="0 1.6 0"> </a-camera>
-        <a-entity id="left-hand" laser-controls="hand: left" raycaster="far: 50; objects: .clickable" super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"></a-entity>></a-entity>
-        <a-entity id="right-hand" laser-controls="hand: left" raycaster="far: 50; objects: .clickable" super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"></a-entity>></a-entity>
+        <a-entity id="left-hand" laser-controls="hand: left" raycaster="far: 50; objects: .grabbable" super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"></a-entity>></a-entity>
+        <a-entity id="right-hand" laser-controls="hand: right" raycaster="far: 50; objects: .grabbable" super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"></a-entity>></a-entity>
       </a-entity>
 
       <!-- Recycling Bins -->
