@@ -5,15 +5,15 @@
     <title>Recycling Game</title>
     <meta name="description" content="A simple recycling game in A-Frame." />
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe@master/components/aframe-physics-system.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/wmurphyrd/aframe-super-hands-component/dist/aframe-super-hands-component.min.js"></script>
+    
     <script src="js/spawn-recyclables.js"></script>
-    <!-- <script src="js/grabbable.js"></script> -->
+    <script src="js/grabbable.js"></script>
     <script src="js/recycling-bin.js"></script>
   </head>
   <body>
-    <a-scene>
+    <a-scene physics="gravity: 0 -9.8 0; debug: true">
       <a-assets>
         <img id="plastic-texture" src="./textures/plastic.jpg" />
         <img id="paper-texture" src="./textures/paper.jpg" />
@@ -97,6 +97,7 @@
         width="10"
         height="10"
         color="#7BC8A4"
+        static-body
       ></a-plane>
       <a-sky color="#ECECEC"></a-sky>
     </a-scene>

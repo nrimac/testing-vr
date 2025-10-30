@@ -16,7 +16,7 @@ AFRAME.registerComponent("spawn-recyclables", {
         block.setAttribute("height", 0.2);
         block.setAttribute("depth", 0.2);
         block.setAttribute("grabbable", "");
-        block.setAttribute("dynamic-body", "");
+        block.setAttribute("dynamic-body", { mass: 0.2 });
         block.setAttribute("position", {
           x: (Math.random() - 0.5) * 10,
           y: 1.3,
