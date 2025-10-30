@@ -4,14 +4,14 @@ AFRAME.registerComponent("grabbable", {
     this.grabbingHand = null;
 
     // Bind event handlers to this component instance
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onTriggerDown = this.onTriggerDown.bind(this);
+    this.onTriggerUp = this.onTriggerUp.bind(this);
 
     // Listen for trigger press on the object itself
-    this.el.addEventListener("mousedown", this.onMouseDown);
+    this.el.addEventListener("mousedown", this.onTriggerDown);
   },
 
-  onMouseDown: function (evt) {
+  onTriggerDown: function (evt) {
     // Prevent grabbing if already held
     if (this.grabbing) { return; }
 
@@ -26,12 +26,12 @@ AFRAME.registerComponent("grabbable", {
     // Attach the object to the grabbing hand
     this.grabbingHand.object3D.attach(this.el.object3D);
 
-    // Listen for the trigger release on the scene to ensure it's caught
-    this.el.sceneEl.addEventListener("mouseup", this.onMouseUp);
+    // Listen for the trigger release on the grabbing hand
+    this.grabbingHand.addEventListener("triggerup", this.onTriggerUp);
   },
 
-  onMouseUp: function (evt) {
-    // Ensure we are in a grabbing state
+  onTriggerUp: function (evt) {
+    // Ensure we are in a grabbing state and the event is from the correct hand
     if (!this.grabbing || !this.grabbingHand) { return; }
     
     const sceneEl = this.el.sceneEl;
@@ -51,16 +51,20 @@ AFRAME.registerComponent("grabbable", {
 
     // Re-enable physics by adding the dynamic-body component back
     this.el.setAttribute("dynamic-body", { mass: 0.2 });
+    
+    // Clean up the listener on the hand
+    this.grabbingHand.removeEventListener("triggerup", this.onTriggerUp);
 
-    // Reset state and clean up the listener
+    // Reset state
     this.grabbing = false;
     this.grabbingHand = null;
-    this.el.sceneEl.removeEventListener("mouseup", this.onMouseUp);
   },
   
   // Clean up listeners if the entity is removed
   remove: function() {
-    this.el.removeEventListener("mousedown", this.onMouseDown);
-    this.el.sceneEl.removeEventListener("mouseup", this.onMouseUp);
+    this.el.removeEventListener("mousedown", this.onTriggerDown);
+    if (this.grabbingHand) {
+      this.grabbingHand.removeEventListener("triggerup", this.onTriggerUp);
+    }
   }
 });
