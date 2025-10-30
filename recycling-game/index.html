@@ -6,7 +6,6 @@
     <meta name="description" content="A simple recycling game in A-Frame." />
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe@master/components/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe@master/components/aframe-physics-system.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/wmurphyrd/aframe-super-hands-component/dist/aframe-super-hands-component.min.js"></script>
     <script src="js/spawn-recyclables.js"></script>
@@ -24,8 +23,18 @@
       <!-- Player -->
       <a-entity id="player" movement-controls="fly: false; speed: 0.07">
         <a-camera position="0 1.6 0"> </a-camera>
-        <a-entity id="left-hand" laser-controls="hand: left" raycaster="far: 50; objects: .grabbable" super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"></a-entity>></a-entity>
-        <a-entity id="right-hand" laser-controls="hand: right" raycaster="far: 50; objects: .grabbable" super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"></a-entity>></a-entity>
+        <a-entity
+          id="left-hand"
+          laser-controls="hand: left"
+          raycaster="far: 50; objects: .grabbable"
+          super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"
+        ></a-entity>
+        <a-entity
+          id="right-hand"
+          laser-controls="hand: right"
+          raycaster="far: 50; objects: .grabbable"
+          super-hands="colliderEvent: raycaster-intersected; colliderEventProperty: els"
+        ></a-entity>
       </a-entity>
 
       <!-- Recycling Bins -->
@@ -36,6 +45,7 @@
         width="1"
         color="#FFFF00"
         recycling-bin="type: plastic"
+        static-body
       >
         <a-text
           value="Plastic"
@@ -51,6 +61,7 @@
         width="1"
         color="#0000FF"
         recycling-bin="type: paper"
+        static-body
       >
         <a-text
           value="Paper"
@@ -66,6 +77,7 @@
         width="1"
         color="#00FF00"
         recycling-bin="type: glass"
+        static-body
       >
         <a-text
           value="Glass"
