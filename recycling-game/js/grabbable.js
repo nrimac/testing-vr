@@ -3,9 +3,11 @@ AFRAME.registerComponent("grabbable", {
     this.grabbing = false;
     this.grabbingHand = null;
 
+    // Bind event handlers to this component instance
     this.onTriggerDown = this.onTriggerDown.bind(this);
     this.onTriggerUp = this.onTriggerUp.bind(this);
 
+    // Listen for trigger press on the object itself
     this.el.addEventListener("mousedown", this.onTriggerDown);
   },
 
@@ -35,25 +37,50 @@ AFRAME.registerComponent("grabbable", {
     const sceneEl = this.el.sceneEl;
     const worldPosition = new THREE.Vector3();
     const worldRotation = new THREE.Quaternion();
+    const el = this.el; // Store a reference to the element for use in callbacks
 
-    this.el.object3D.getWorldPosition(worldPosition);
-    this.el.object3D.getWorldQuaternion(worldRotation);
+    // Get the object's current world position and rotation
+    el.object3D.getWorldPosition(worldPosition);
+    el.object3D.getWorldQuaternion(worldRotation);
 
-    sceneEl.object3D.attach(this.el.object3D);
+    // Detach from the hand and re-attach to the scene
+    sceneEl.object3D.attach(el.object3D);
 
-    this.el.object3D.position.copy(worldPosition);
-    this.el.object3D.quaternion.copy(worldRotation);
+    // Set the object's position and rotation in the world
+    el.object3D.position.copy(worldPosition);
+    el.object3D.quaternion.copy(worldRotation);
 
-     setTimeout(() => {
+    // --- Start of the definitive fix ---
+    // Defer re-adding the physics body to the next tick to ensure the scene graph is updated.
+    setTimeout(() => {
+      // Re-add the dynamic-body component to re-enable physics.
       el.setAttribute("dynamic-body", { mass: 0.2 });
-    }, 0);
 
+      // The physics body is not created instantly. We must wait for the 'body-loaded' event.
+      el.addEventListener(
+        "body-loaded",
+        () => {
+          // Now that the physics body exists, reset its velocities.
+          // This prevents it from flying off with the hand's last velocity.
+          if (el.body) {
+            el.body.velocity.set(0, 0, 0);
+            el.body.angularVelocity.set(0, 0, 0);
+          }
+        },
+        { once: true } // The listener will automatically remove itself after firing once.
+      );
+    }, 0);
+    // --- End of the definitive fix ---
+
+    // Clean up the listener on the hand
     this.grabbingHand.removeEventListener("triggerup", this.onTriggerUp);
 
+    // Reset state
     this.grabbing = false;
     this.grabbingHand = null;
   },
 
+  // Clean up listeners if the entity is removed
   remove: function () {
     this.el.removeEventListener("mousedown", this.onTriggerDown);
     if (this.grabbingHand) {
