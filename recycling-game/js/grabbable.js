@@ -49,10 +49,10 @@ AFRAME.registerComponent("grabbable", {
     this.el.object3D.position.copy(worldPosition);
     this.el.object3D.quaternion.copy(worldRotation);
 
-    // Re-enable physics by adding the dynamic-body component back
-    this.el.setAttribute("dynamic-body", { mass: 0.2 });
+     setTimeout(() => {
+      el.setAttribute("dynamic-body", { mass: 0.2 });
+    }, 0);
 
-    // Clean up the listener on the hand
     this.grabbingHand.removeEventListener("triggerup", this.onTriggerUp);
 
     // Reset state
