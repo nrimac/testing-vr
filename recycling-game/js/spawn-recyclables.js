@@ -12,9 +12,9 @@ AFRAME.registerComponent("spawn-recyclables", {
         block.setAttribute("class", "recyclable grabbable");
         block.setAttribute("data-type", material.type);
         block.setAttribute("src", material.texture);
-        block.setAttribute("width", 0.05);
-        block.setAttribute("height", 0.05);
-        block.setAttribute("depth", 0.05);
+        block.setAttribute("width", 0.08);
+        block.setAttribute("height", 0.08);
+        block.setAttribute("depth", 0.08);
         block.setAttribute("grabbable", "");
         block.setAttribute("dynamic-body", { mass: 0.2 });
         block.setAttribute("sleepy", "");

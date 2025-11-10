@@ -3,6 +3,10 @@ AFRAME.registerComponent("grabbable", {
     this.grabbing = false;
     this.grabbingHand = null;
 
+    if (this.el.components.sleepy) {
+      this.el.components.sleepy.wakeUp();
+    }
+
     // Bind event handlers to this component instance
     this.onTriggerDown = this.onTriggerDown.bind(this);
     this.onTriggerUp = this.onTriggerUp.bind(this);
@@ -12,24 +16,32 @@ AFRAME.registerComponent("grabbable", {
   },
 
   onTriggerDown: function (evt) {
+    // Prevent grabbing if already held
     if (this.grabbing) {
       return;
     }
 
+    // Get the controller that triggered the event
     const hand = evt.detail.cursorEl;
     this.grabbing = true;
     this.grabbingHand = hand;
-
     if (this.el.components.sleepy) {
       this.el.components.sleepy.wakeUp();
     }
-
+    //test comment
+    const a = "do nothing";
+    // Temporarily disable physics by removing the dynamic-body while grabbing
     this.el.removeAttribute("dynamic-body");
+
+    // Attach the object to the grabbing hand
     this.grabbingHand.object3D.attach(this.el.object3D);
+
+    // Listen for the trigger release on the grabbing hand
     this.grabbingHand.addEventListener("triggerup", this.onTriggerUp);
   },
 
   onTriggerUp: function (evt) {
+    // Ensure we are in a grabbing state and the event is from the correct hand
     if (!this.grabbing || !this.grabbingHand) {
       return;
     }
