@@ -4,10 +4,14 @@ AFRAME.registerComponent("recycling-bin", {
   },
 
   init: function () {
-    this.el.addEventListener("body-entered", (evt) => {
-      const recyclable = evt.detail.body.el;
-      if (recyclable.dataset.type === this.data.type) {
-        recyclable.parentNode.removeChild(recyclable);
+    this.el.addEventListener("collide", (e) => {
+      const collidedEl = e.detail.body.el;
+
+      if (
+        collidedEl.classList.contains("recyclable") &&
+        collidedEl.dataset.type === this.data.type
+      ) {
+        collidedEl.parentNode.removeChild(collidedEl);
       }
     });
   },
