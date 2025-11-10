@@ -9,7 +9,7 @@ AFRAME.registerComponent("spawn-recyclables", {
     materials.forEach((material) => {
       for (let i = 0; i < material.count; i++) {
         const block = document.createElement("a-box");
-        block.setAttribute("class", "recyclable");
+        block.setAttribute("class", "recyclable grabbbable");
         block.setAttribute("data-type", material.type);
         block.setAttribute("src", material.texture);
         block.setAttribute("width", 0.1);
