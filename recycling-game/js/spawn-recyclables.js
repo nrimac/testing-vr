@@ -17,12 +17,19 @@ AFRAME.registerComponent("spawn-recyclables", {
         block.setAttribute("depth", 0.08);
         block.setAttribute("grabbable", "");
         block.setAttribute("dynamic-body", { mass: 0.2 });
-        block.setAttribute("sleepy", "");
         block.setAttribute("position", {
           x: (Math.random() - 0.5) * 10,
           y: 1.3,
           z: (Math.random() - 0.5) * 2 - 1,
         });
+
+        
+        block.addEventListener('body-loaded', function () {
+          if (block.body) {
+            block.body.wakeUp();
+          }
+        });
+
         this.el.sceneEl.appendChild(block);
       }
     });
