@@ -1,16 +1,16 @@
-AFRAME.registerComponent("delete-on-contact", {
-  schema: {
-    target: { type: "string", default: ".custom-grabbable" },
-  },
-
+AFRAME.registerComponent('delete-on-contact', {
   init: function () {
-    this.el.addEventListener("contactbegin", this.handleContact.bind(this));
-  },
-
-  handleContact: function (event) {
-    const targetEl = event.detail.body.el;
-    if (targetEl.matches(this.data.target)) {
-      targetEl.parentNode.removeChild(targetEl);
-    }
-  },
+    // Listen for the AABB Collider 'hitstart' event
+    this.el.addEventListener('hitstart', (evt) => {
+      
+      // evt.detail.intersectedEls contains all objects touching the bin
+      evt.detail.intersectedEls.forEach(hitEl => {
+        
+        // If the object is trash (grabbable), remove it
+        if (hitEl.classList.contains('grabbable')) {
+          hitEl.parentNode.removeChild(hitEl);
+        }
+      });
+    });
+  }
 });
