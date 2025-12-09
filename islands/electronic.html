@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Recycle Islands VR - Electonic Island</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="../js/blink-controls.js"></script>
+    <script src="../js/island-controls.js"></script>
+    <script src="../js/island.js"></script>
+  </head>
+
+  <body>
+    <a-scene>
+
+      <a-sky></a-sky>
+
+      <a-entity id="defaultLight"></a-entity>
+      <a-entity id="sunLight" position="1 1 0"></a-entity>
+
+      <a-entity id="rig" movement-controls="fly: false; speed: 2" wasd-controls="acceleration: 20">
+        <a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+
+        <a-entity id="leftHand"  oculus-touch-controls="hand: left"></a-entity>
+        <a-entity id="rightHand" oculus-touch-controls="hand: right"></a-entity>
+
+        <a-entity id="leftLaser" 
+                  laser-controls="hand: left"
+                  teleport-controls="cameraRig: #rig; teleportOrigin: #camera">
+        </a-entity>
+
+        <a-entity id="rightLaser" 
+                  laser-controls="hand: right"
+                  teleport-controls="cameraRig: #rig; teleportOrigin: #camera">
+        </a-entity>
+
+      </a-entity>
+
+      <a-plane class="ground"
+               rotation="-90 0 0">
+      </a-plane>
+
+    </a-scene>
+  </body>
+</html>
