@@ -5,15 +5,15 @@
     <title>Recycle Islands VR - Plastic Island</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
+    <script src="https://unpkg.com/super-hands@3.0.4/dist/super-hands.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
 
     <script src="../js/island.js"></script>
-    <script src="../js/custom-grabbable.js"></script>
     <script src="../js/delete-on-contact.js"></script>
   </head>
 
   <body>
-    <a-scene>
+    <a-scene physics="gravity: -9.8; debug: false">
       <a-assets>
         <a-asset-item
           id="palmModel"
@@ -46,20 +46,21 @@
 
       <a-entity id="player" movement-controls="fly: false; speed: 0.2">
         <a-camera position="0 0.5 0">
-          <!-- IMPORTANT - Remove <a-cursor> tag after development -->
         </a-camera>
+        
         <a-entity
           id="left-hand"
           hand-controls="hand: left; modelStyle: highPoly"
-          raycaster="objects: .custom-grabbable"
-          cursor
-        ></a-entity>
+          sphere-collider="objects: .grabbable"
+          super-hands>
+        </a-entity>
+
         <a-entity
           id="right-hand"
           hand-controls="hand: right; modelStyle: highPoly"
-          raycaster="objects: .custom-grabbable"
-          cursor
-        ></a-entity>
+          sphere-collider="objects: .grabbable"
+          super-hands>
+        </a-entity>
       </a-entity>
 
       <a-cylinder
@@ -69,7 +70,7 @@
         radius="0.5"
         position="0 0 -5"
         static-body
-        delete-on-contact
+        delete-on-contact="target: .grabbable"
       ></a-cylinder>
 
       <a-box
@@ -180,8 +181,12 @@
           );
           plastic.setAttribute("scale", "0.1 0.1 0.1");
           plastic.setAttribute("rotation", `90 0 ${Math.random() * 360}`);
-          plastic.setAttribute("custom-grabbable", "");
-          plastic.setAttribute("class", "custom-grabbable");
+          
+          // Updated attributes for Super Hands and Physics
+          plastic.setAttribute("grabbable", "");
+          plastic.setAttribute("dynamic-body", "mass: 0.2");
+          plastic.setAttribute("class", "grabbable");
+          
           document.querySelector("a-scene").appendChild(plastic);
         }
 
@@ -196,8 +201,12 @@
           );
           plastic.setAttribute("scale", "2 2 2");
           plastic.setAttribute("rotation", `0 ${Math.random() * 360} 0`);
-          plastic.setAttribute("custom-grabbable", "");
-          plastic.setAttribute("class", "custom-grabbable");
+          
+          // Updated attributes for Super Hands and Physics
+          plastic.setAttribute("grabbable", "");
+          plastic.setAttribute("dynamic-body", "mass: 0.2");
+          plastic.setAttribute("class", "grabbable");
+
           document.querySelector("a-scene").appendChild(plastic);
         }
 
@@ -212,8 +221,12 @@
           );
           plastic.setAttribute("scale", "3 3 3");
           plastic.setAttribute("rotation", `0 0 0`);
-          plastic.setAttribute("custom-grabbable", "");
-          plastic.setAttribute("class", "custom-grabbable");
+
+          // Updated attributes for Super Hands and Physics
+          plastic.setAttribute("grabbable", "");
+          plastic.setAttribute("dynamic-body", "mass: 0.2");
+          plastic.setAttribute("class", "grabbable");
+
           document.querySelector("a-scene").appendChild(plastic);
         }
       </script>
