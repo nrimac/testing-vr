@@ -1,19 +1,21 @@
 AFRAME.registerComponent('delete-on-contact', {
   init: function () {
-    // Listen for the physics system's collision event
+    // Use the physics system's 'collide' event
     this.el.addEventListener('collide', (e) => {
       
-      // e.detail.body refers to the physics body of the object that hit the bin
-      // We access the A-Frame element attached to that body via .el
+      // Get the element attached to the physics body that hit the bin
       const hitEl = e.detail.body ? e.detail.body.el : null;
 
-      // Check if the element exists and has the 'grabbable' class
+      // Check if it's a grabbable item
       if (hitEl && hitEl.classList.contains('grabbable')) {
         
-        // Remove the element from the scene if it is still attached
-        if (hitEl.parentNode) {
-          hitEl.parentNode.removeChild(hitEl);
-        }
+        // CRITICAL FIX: Defer removal to the next tick. 
+        // Removing a physics body synchronously during a collision event crashes the engine.
+        setTimeout(() => {
+          if (hitEl.parentNode) {
+            hitEl.parentNode.removeChild(hitEl);
+          }
+        }, 0);
       }
     });
   }
