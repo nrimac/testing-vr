@@ -26,19 +26,21 @@
       <a-light type="point" color="#ffdca8" intensity="2" distance="500" position="0 20 0"></a-light>
 
       <a-entity id="player" movement-controls="fly: false; speed: 0.2">
-        <a-camera position="0 0.5 0"></a-camera>
+        <a-camera position="0 0.5 0">
+           <a-cursor raycaster="objects: .grabbable" color="yellow"></a-cursor>
+        </a-camera>
 
         <a-entity
           id="left-hand"
           hand-controls="hand: left; modelStyle: highPoly"
-          sphere-collider="objects: .grabbable; radius: 0.1"
+          sphere-collider="objects: .grabbable; radius: 0.2"
           simple-grab>
         </a-entity>
 
         <a-entity
           id="right-hand"
           hand-controls="hand: right; modelStyle: highPoly"
-          sphere-collider="objects: .grabbable; radius: 0.1"
+          sphere-collider="objects: .grabbable; radius: 0.2"
           simple-grab>
         </a-entity>
       </a-entity>
@@ -122,11 +124,9 @@
             const plastic = document.createElement("a-entity");
             plastic.setAttribute("gltf-model", modelId);
             
-            // Random Position
             const x = Math.random() * sandWidth - sandWidth / 2;
             const z = Math.random() * sandHeight - sandHeight / 2 + sandOffsetZ;
             plastic.setAttribute("position", `${x} ${yPos} ${z}`);
-            
             plastic.setAttribute("scale", scale);
 
             if (rotationType === 'random') {
@@ -135,10 +135,10 @@
               plastic.setAttribute("rotation", `90 0 ${Math.random() * 360}`);
             }
 
-            // IMPORTANT: Add 'grabbable' class for our script to find it
+            // CRITICAL: Must have 'grabbable' class
             plastic.setAttribute("class", "grabbable");
             
-            // Add physics body
+            // Physics
             plastic.setAttribute("dynamic-body", "mass: 0.2; shape: auto");
 
             document.querySelector("a-scene").appendChild(plastic);

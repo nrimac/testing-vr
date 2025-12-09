@@ -1,47 +1,98 @@
 AFRAME.registerComponent('simple-grab', {
   init: function () {
     this.grabbedEl = null;
-    this.system = this.el.sceneEl.systems.physics;
+    this.hoveredEl = null;
 
     // Bind event handlers
-    this.onGripDown = this.onGripDown.bind(this);
-    this.onGripUp = this.onGripUp.bind(this);
+    this.onHit = this.onHit.bind(this);
+    this.onHitEnd = this.onHitEnd.bind(this);
+    this.onGrab = this.onGrab.bind(this);
+    this.onRelease = this.onRelease.bind(this);
 
-    // Listen for controller buttons (Trigger or Grip)
-    this.el.addEventListener('triggerdown', this.onGripDown);
-    this.el.addEventListener('gripdown', this.onGripDown);
-    this.el.addEventListener('triggerup', this.onGripUp);
-    this.el.addEventListener('gripup', this.onGripUp);
+    // 1. Listen for collisions (Hand touching object)
+    // Note: sphere-collider uses 'hit'/'hitend', aabb-collider uses 'hitstart'/'hitend'
+    // We listen to both to be safe.
+    this.el.addEventListener('hit', this.onHit);
+    this.el.addEventListener('hitstart', this.onHit);
+    this.el.addEventListener('hitend', this.onHitEnd);
+
+    // 2. Listen for controller buttons (Trigger or Grip)
+    this.el.addEventListener('triggerdown', this.onGrab);
+    this.el.addEventListener('gripdown', this.onGrab);
+
+    // 3. Listen for release
+    this.el.addEventListener('triggerup', this.onRelease);
+    this.el.addEventListener('gripup', this.onRelease);
+
+    // 4. Desktop/Mouse Support (Click to grab)
+    this.el.addEventListener('mousedown', this.onGrab);
+    this.el.addEventListener('mouseup', this.onRelease);
   },
 
-  onGripDown: function () {
-    // 1. Get the closest object from the sphere-collider
-    const collider = this.el.components['sphere-collider'];
-    if (!collider || !collider.closestIntersected) return;
+  onHit: function (evt) {
+    // If we are already holding something, ignore new hits
+    if (this.grabbedEl) return;
 
-    const targetEl = collider.closestIntersected;
+    // Get the first intersected element
+    const hitEl = evt.detail.intersectedEls ? evt.detail.intersectedEls[0] : evt.detail.el;
+    
+    if (!hitEl || !hitEl.classList.contains('grabbable')) return;
 
-    // 2. Only grab elements with the 'grabbable' class
-    if (!targetEl.classList.contains('grabbable')) return;
+    // Highlight the object to show it's ready to be grabbed
+    if (this.hoveredEl !== hitEl) {
+      this.hoveredEl = hitEl;
+      this.savedColor = this.hoveredEl.getAttribute('material')?.color || 'white';
+      this.hoveredEl.setAttribute('material', 'color', '#FF0000'); // Turn RED on hover
+    }
+  },
 
-    this.grabbedEl = targetEl;
+  onHitEnd: function () {
+    // Restore color when hand leaves
+    if (this.hoveredEl && !this.grabbedEl) {
+      this.hoveredEl.setAttribute('material', 'color', this.savedColor);
+      this.hoveredEl = null;
+    }
+  },
 
-    // 3. Remove dynamic-body (physics) so it doesn't fight the hand movement
+  onGrab: function () {
+    // 1. Decide what to grab: either the hovered object OR ask the collider directly
+    let target = this.hoveredEl;
+
+    if (!target) {
+      // Fallback: Check collider directly if event was missed
+      const collider = this.el.components['sphere-collider'];
+      if (collider && collider.intersectedEls.length > 0) {
+        target = collider.intersectedEls.find(el => el.classList.contains('grabbable'));
+      }
+    }
+
+    if (!target) return; // Nothing to grab
+
+    this.grabbedEl = target;
+    
+    // Restore original color before grabbing
+    if (this.savedColor) {
+        this.grabbedEl.setAttribute('material', 'color', this.savedColor);
+    }
+
+    // 2. DISABLE PHYSICS so it doesn't fight the hand
     this.grabbedEl.removeAttribute('dynamic-body');
 
-    // 4. Attach the object to the hand (visual parenting)
+    // 3. Attach to hand
     this.el.object3D.attach(this.grabbedEl.object3D);
   },
 
-  onGripUp: function () {
+  onRelease: function () {
     if (!this.grabbedEl) return;
 
-    // 1. Detach from hand and re-attach to the scene
+    // 1. Detach from hand and re-attach to scene
     this.el.sceneEl.object3D.attach(this.grabbedEl.object3D);
 
-    // 2. Re-enable physics (dynamic-body) so it falls/interacts again
+    // 2. Re-enable physics
     this.grabbedEl.setAttribute('dynamic-body', 'mass: 0.2; shape: auto');
 
+    // 3. Reset state
     this.grabbedEl = null;
+    this.hoveredEl = null;
   }
 });
